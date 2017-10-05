@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A13C9D791F3ADF90007DCB10 /* MSButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13C9D781F3ADF90007DCB10 /* MSButtonNode.swift */; };
+		A18F15AC1F3ADA6300F94879 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18F15AB1F3ADA6300F94879 /* MainMenu.swift */; };
+		A18F15AE1F3ADA9600F94879 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = A18F15AD1F3ADA9600F94879 /* MainMenu.sks */; };
 		A1EB15381F3A93DC005A227C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1EB15371F3A93DC005A227C /* AppDelegate.swift */; };
 		A1EB153A1F3A93DC005A227C /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = A1EB15391F3A93DC005A227C /* GameScene.sks */; };
 		A1EB153C1F3A93DC005A227C /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = A1EB153B1F3A93DC005A227C /* Actions.sks */; };
@@ -37,6 +40,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A13C9D781F3ADF90007DCB10 /* MSButtonNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MSButtonNode.swift; sourceTree = "<group>"; };
+		A18F15AB1F3ADA6300F94879 /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
+		A18F15AD1F3ADA9600F94879 /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenu.sks; sourceTree = "<group>"; };
 		A1EB15341F3A93DC005A227C /* Dodger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dodger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1EB15371F3A93DC005A227C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1EB15391F3A93DC005A227C /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -103,10 +109,13 @@
 		A1EB15361F3A93DC005A227C /* Dodger */ = {
 			isa = PBXGroup;
 			children = (
+				A13C9D781F3ADF90007DCB10 /* MSButtonNode.swift */,
 				A1EB15371F3A93DC005A227C /* AppDelegate.swift */,
 				A1EB15391F3A93DC005A227C /* GameScene.sks */,
-				A1EB153B1F3A93DC005A227C /* Actions.sks */,
 				A1EB153D1F3A93DC005A227C /* GameScene.swift */,
+				A1EB153B1F3A93DC005A227C /* Actions.sks */,
+				A18F15AB1F3ADA6300F94879 /* MainMenu.swift */,
+				A18F15AD1F3ADA9600F94879 /* MainMenu.sks */,
 				A1EB153F1F3A93DC005A227C /* GameViewController.swift */,
 				A1EB15411F3A93DC005A227C /* Main.storyboard */,
 				A1EB15441F3A93DC005A227C /* Assets.xcassets */,
@@ -245,6 +254,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1EB15431F3A93DC005A227C /* Main.storyboard in Resources */,
+				A18F15AE1F3ADA9600F94879 /* MainMenu.sks in Resources */,
 				A1EB153A1F3A93DC005A227C /* GameScene.sks in Resources */,
 				A1EB15451F3A93DC005A227C /* Assets.xcassets in Resources */,
 				A1EB15481F3A93DC005A227C /* LaunchScreen.storyboard in Resources */,
@@ -273,9 +283,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A18F15AC1F3ADA6300F94879 /* MainMenu.swift in Sources */,
 				A1EB153E1F3A93DC005A227C /* GameScene.swift in Sources */,
 				A1EB15401F3A93DC005A227C /* GameViewController.swift in Sources */,
 				A1EB15381F3A93DC005A227C /* AppDelegate.swift in Sources */,
+				A13C9D791F3ADF90007DCB10 /* MSButtonNode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,6 +447,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = NinjaAung.Dodger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -448,6 +461,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = NinjaAung.Dodger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -528,6 +542,7 @@
 				A1EB15641F3A93DD005A227C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A1EB15651F3A93DD005A227C /* Build configuration list for PBXNativeTarget "DodgerTests" */ = {
 			isa = XCConfigurationList;
@@ -536,6 +551,7 @@
 				A1EB15671F3A93DD005A227C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A1EB15681F3A93DD005A227C /* Build configuration list for PBXNativeTarget "DodgerUITests" */ = {
 			isa = XCConfigurationList;
@@ -544,6 +560,7 @@
 				A1EB156A1F3A93DD005A227C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

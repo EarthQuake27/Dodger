@@ -1,89 +1,257 @@
 //
 //  GameScene.swift
-//  Dodger
+//  Unkown Game
 //
-//  Created by Nyein Chan Aung on 8/8/17.
+//  Created by Nyein Chan Aung on 7/25/17.
 //  Copyright © 2017 Nyein Chan Aung. All rights reserved.
 //
 
-import SpriteKit
 import GameplayKit
+import SpriteKit
+import CoreMotion
 
-class GameScene: SKScene {
+enum GameSceneState {
+    case paused, active, gameOver
+}
+
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
+    var gameState: GameSceneState = .paused
+    var sinceTouch : TimeInterval = 0
+    var lastTouchPosition: CGPoint?
+    var buttonRestart: MSButtonNode!
+    var returMenu: MSButtonNode!
+    var complimentLabel: SKLabelNode!
+    var instructions: MSButtonNode!
+    var text = 0
+    var decrease = 0.7
+    var player: SKSpriteNode!
+    var scoreLabel: SKLabelNode!
+    var points = 0
+    var motionManager: CMMotionManager!
+    let scrollSpeed: CGFloat = 160
+    let fixedDelta: TimeInterval = 1.0/60.0 /* 60 FPS */
+    let bulletCategory: UInt32 = 0x1 << 0;
+    let playerCategory: UInt32 = 0x1 << 1;
+    let deleteCapCategory: UInt32 = 0x1 << 2;
     
     override func didMove(to view: SKView) {
+        //Set up scene
         
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
+        
+        //Set physics contact delegate
+        physicsWorld.contactDelegate = self
+        
+        //Movement
+        motionManager = CMMotionManager()
+        motionManager.startAccelerometerUpdates()
+        motionManager.accelerometerUpdateInterval = 0.1
+        physicsWorld.gravity = CGVector(dx: 0, dy: 0)
+        
+        //Recursive Node for goompa
+        player = self.childNode(withName: "//player") as! SKSpriteNode
+        
+        //Recursive Node for scoreLabel
+        scoreLabel = self.childNode(withName: "scoreLabel") as! SKLabelNode
+        
+        //Recursicel Node for InsultLabel
+        complimentLabel = self.childNode(withName: "complimentLabel") as! SKLabelNode
+        
+        //Recursive Node for Instructions
+        instructions = self.childNode(withName: "instructions") as! MSButtonNode
+        
+        instructions.selectedHandler = {
+            self.instructions.removeFromParent()
+            self.gameState = .active
+            self.spawnBullets()
         }
         
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
+        //Recursive Node for restart
+        buttonRestart = self.childNode(withName: "//buttonRestart") as! MSButtonNode
         
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
+        buttonRestart.selectedHandler = {
             
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
+            //RestartM8
+            let skView = self.view as SKView!
+            
+            //Load Game scene
+            let scene = GameScene(fileNamed:"GameScene") as GameScene!
+            
+            //Ensure correct aspect mode
+            scene?.scaleMode = .aspectFill
+            
+            //Restart game scene
+            skView?.presentScene(scene)
         }
+        
+        buttonRestart.state = .MSButtonNodeStateHidden
+        
+        
+        //Recursive Node for the Menu
+        returMenu = self.childNode(withName: "returMenu") as! MSButtonNode!
+        
+        returMenu.selectedHandler = {
+            self.returnEnu()
+            
+        }
+        
+        returMenu.state = .MSButtonNodeStateHidden
+        
+        
+        
+        
+        /* Reset Score label */
+        scoreLabel.text = "\(points)"
+        
     }
     
-    
-    func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
-        }
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
-        }
+    func didBegin(_ contact: SKPhysicsContact) {
+        //payer touches anything, game over
+        
+        //Ensure only called while game running
+        if gameState != .active { return }
+        
+        //Change game state to game over
+        gameState = .gameOver
+        
+        // Stop animation
+        player.removeAllActions()
+        
+        //stop Movement
+        player.physicsBody?.isDynamic = false
+        
+        // Show restart button
+        buttonRestart.state = .MSButtonNodeStateActive
+        
+        //show returnMenu
+        returMenu.state = .MSButtonNodeStateActive
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
-        
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+        //Called when a touch begin
     }
     
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+        //called when recuring frame
+        
+        if gameState != .active { return }
+        
+        if points < 200 {
+            
+            
+            #if (arch(i386) || arch(x86_64))
+                if let currentTouch = lastTouchPosition {
+                    let diff = CGPoint(x: currentTouch.x - player.position.x, y: currentTouch.y - player.position.y)
+                    physicsWorld.gravity = CGVector(dx: diff.x / 100, dy: diff.y / 100)
+                }
+            #else
+                if let accelerometerData = motionManager.accelerometerData {
+                    player.physicsBody?.velocity = CGVector(dx: accelerometerData.acceleration.x * 1000, dy: accelerometerData.acceleration.x * 0)
+                }
+            #endif
+            
+        }
+    }
+    
+    func returnEnu() {
+        /* 1) Grab reference to our SpriteKit view */
+        guard let skView = self.view as SKView! else {
+            print("Could not get Skview")
+            return
+        }
+        
+        /* 2) Load Game scene */
+        guard let scene = MainMenu(fileNamed:"MainMenu") else {
+            print("Could not make GameScene, check the name is spelled correctly")
+            return
+        }
+        
+        /* 3) Ensure correct aspect mode */
+        scene.scaleMode = .aspectFill
+        
+        /* Show debug */
+        skView.showsPhysics = true
+        skView.showsDrawCount = true
+        skView.showsFPS = true
+        
+        /* 4) Start game scene */
+        skView.presentScene(scene)
+    }
+    
+    
+    func spawnBullets() {
+        
+        
+        let bullet = SKSpriteNode(imageNamed: "Spike")
+        let spawnPoint = UInt32(self.size.width)
+        
+        
+        bullet.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 10, height: 60))
+        bullet.physicsBody?.isDynamic = true
+        bullet.physicsBody?.allowsRotation = false
+        bullet.physicsBody?.categoryBitMask = bulletCategory
+        bullet.physicsBody?.categoryBitMask = bulletCategory
+        bullet.physicsBody?.contactTestBitMask = playerCategory
+        bullet.physicsBody?.collisionBitMask = bulletCategory
+        bullet.physicsBody?.collisionBitMask = playerCategory
+        bullet.physicsBody?.collisionBitMask = deleteCapCategory
+        bullet.position = CGPoint(x: CGFloat(arc4random_uniform(spawnPoint)), y: self.size.height)
+        
+        if gameState != .gameOver {
+            
+            let action = SKAction.moveTo(y: -50, duration: TimeInterval(decrease))
+            bullet.run(SKAction.repeatForever(action))
+            
+            
+            if bullet.position.y >= 100 {
+                bullet.removeFromParent()
+                print("delete")
+            }
+            
+            //Speed Cap
+            if points < 50 {
+                
+                decrease -= 0.001
+                
+            } else {
+                
+                if decrease == 0.65 {
+                    decrease = 0.65
+                    if points < 100 {
+                        decrease -= 0.005
+                    } else {
+                        decrease -= 0.005
+                    }
+                }
+                
+            }
+            print(decrease)
+            
+            //Correspondent to the points accumulated
+            points += 1
+            scoreLabel.text = String(points)
+            
+            
+            Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(GameScene.spawnBullets), userInfo: nil, repeats: false)
+            
+            self.addChild(bullet)
+            
+        } else {
+            
+            bullet.removeFromParent()
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
